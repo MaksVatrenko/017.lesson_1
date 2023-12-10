@@ -16,3 +16,38 @@
 //     Implement pagination: If the API supports pagination, add a "Load More" button to fetch and display more books as the user clicks the button.
 //     Add a search feature: Allow users to search for specific books by title or author using an input field and trigger API requests accordingly.
 //     Error handling: Implement a user-friendly error handling mechanism that displays a message when there is an issue with API requests.
+
+
+const apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=javascript';
+const books = [];
+const booksBlock = document.querySelector('.books');
+
+fetch(apiUrl)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        books.push(...data.items);
+        console.log(books);
+        displayBooks();
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+    });
+
+function displayBooks() {
+    const html = books.map(book => {
+        return `
+            <div class="books__item">
+                <img class="books__img" src="${book.volumeInfo.imageLinks.thumbnail}" alt="${book.volumeInfo.title}">
+                <h3 class="books__title">${book.volumeInfo.title}</h3>
+                <p class="books__authors">${book.volumeInfo.authors}</p>
+            </div>
+        `;
+    }).join('');
+
+    booksBlock.innerHTML = html;
+}
